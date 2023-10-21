@@ -22,12 +22,23 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool locked = false;
+
     void Awake(){
         instance = this;
         hand = GetComponentInChildren<PlayerHand>();
     }
 
+    void Start(){
+        StartCoroutine(Dialogue.instance.Play(@"
+        A：你好，我是A。
+        B：你好，我是B。
+        C：你好，我是C。
+        "));
+    }
+
     void UpdateInput(){
+        if(locked) return;
         if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
             commands.Submit();
             return;
