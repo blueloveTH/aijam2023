@@ -1,58 +1,123 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public abstract class Command{
-    public virtual void OnStart(Player player) {}
-    public virtual void OnUpdate(Player player) {}
+    public abstract bool Start(Player player);
     public abstract bool IsEnd(Player player);
 }
 
 class UpCommand : Command{
-    public override void OnStart(Player player){
+    public override bool Start(Player player){
         player.hand.MoveUp();
+        return true;
     }
-
     public override bool IsEnd(Player player){
         return true;
     }
 }
 
 class DownCommand : Command{
-    public override void OnStart(Player player){
+    public override bool Start(Player player){
         player.hand.MoveDown();
+        return true;
     }
-
     public override bool IsEnd(Player player){
         return true;
     }
 }
 
 class PunchCommand : Command{
-    public override void OnStart(Player player){
+    public override bool Start(Player player){
         player.rage += 1;
-        player.hand.Punch();
-    }
-
-    public override bool IsEnd(Player player){
+        player.hand.Punch("hit", false);
         return true;
+    }
+    public override bool IsEnd(Player player){
+        return !player.hand.isPunching;
     }
 }
 
-class MoveLeftCommand : Command{
-    public override void OnStart(Player player){
-        player.MoveLeft();
+abstract class MoveCommandBase : Command{
+    protected Tween tween;
+
+    public override bool Start(Player player){
+        player.body.isMoving = true;
+        tween = player.Move(GetDirection());
+        tween.OnComplete(() => {
+            player.body.isMoving = false;
+        });
+        return true;
     }
 
+    protected abstract float GetDirection();
+
     public override bool IsEnd(Player player){
-        return true;
+        return !tween.IsActive();
     }
 }
 
-class MoveRightCommand : Command{
-    public override void OnStart(Player player){
-        player.MoveRight();
+class MoveLeftCommand : MoveCommandBase{
+    protected override float GetDirection(){
+        return -1;
     }
+}
 
+class MoveRightCommand : MoveCommandBase{
+    protected override float GetDirection(){
+        return 1;
+    }
+}
+
+class FlashHitCommand : Command{
+    public override bool Start(Player player){
+        if(player.rage < 2) return false;
+        bool ex = ChargeUI.instance.PrepareHit("flashhit");
+        player.hand.Punch("flashhit", ex);
+        player.rage -= 2;
+        return true;
+    }
+    public override bool IsEnd(Player player){
+        return !player.hand.isPunching;
+    }
+}
+
+class FireHitCommand : Command{
+    public override bool Start(Player player){
+        if(player.rage < 2) return false;
+        bool ex = ChargeUI.instance.PrepareHit("firehit");
+        player.hand.Punch("firehit", ex);
+        player.rage -= 2;
+        return true;
+    }
+    public override bool IsEnd(Player player){
+        return !player.hand.isPunching;
+    }
+}
+
+class WoodenHitCommand : Command{
+    public override bool Start(Player player){
+        if(player.rage < 2) return false;
+        bool ex = ChargeUI.instance.PrepareHit("woodenhit");
+        player.hand.Punch("woodenhit", ex);
+        player.rage -= 2;
+        return true;
+    }
+    public override bool IsEnd(Player player){
+        return !player.hand.isPunching;
+    }
+}
+
+class HelloWorldCommand : Command{
+    public override bool Start(Player player){
+        if(player.rage < 5) return false;
+        if(!player.helloworldCharged) return false;
+        player.rage -= 5;
+        player.helloworldCharged = false;
+        Grayscale.blend = 1;
+        DOTween.To(() => Grayscale.blend, x => Grayscale.blend = x, 0, 1).SetDelay(7);
+        return true;
+    }
     public override bool IsEnd(Player player){
         return true;
     }
@@ -66,10 +131,16 @@ public class CommandBuffer
         {"hit", typeof(PunchCommand)},
         {"a", typeof(MoveLeftCommand)},
         {"d", typeof(MoveRightCommand)},
+        {"flashhit", typeof(FlashHitCommand)},
+        {"firehit", typeof(FireHitCommand)},
+        {"woodenhit", typeof(WoodenHitCommand)},
+        {"helloworld", typeof(HelloWorldCommand)},
     };
 
     public Queue<Command> queue = new Queue<Command>();
     public List<char> buffer = new List<char>();
+
+    public bool error = false;
 
     readonly List<char> VALID_CHARS = new List<char>(
         "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
@@ -78,19 +149,30 @@ public class CommandBuffer
     public void PushChar(char c){
         if(!VALID_CHARS.Contains(c)) return;
         buffer.Add(c);
+        error = false;
     }
 
     public void PopChar(){
         if(buffer.Count == 0) return;
         buffer.RemoveAt(buffer.Count - 1);
+        error = false;
     }
 
-    public bool Submit(){
+    public void Submit(out bool showPlayWave){
         string word = new string(buffer.ToArray());
         buffer.Clear();
-        if(!allCommands.ContainsKey(word)) return false;
+        if(!allCommands.ContainsKey(word)){
+            error = true;
+            showPlayWave = false;
+            return;
+        }
         Command command = (Command)System.Activator.CreateInstance(allCommands[word]);
         queue.Enqueue(command);
-        return true;
+        if(word.Contains("hit")){
+            showPlayWave = true;
+        }else{
+            showPlayWave = false;
+        }
+        error = false;
     }
 }

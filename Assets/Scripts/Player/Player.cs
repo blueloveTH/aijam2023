@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Unit
 {
     public CommandBuffer commands = new CommandBuffer();
     public Command currentCommand = null;
 
-    public PlayerHand hand;
+    [System.NonSerialized] public PlayerHand hand;
+    [System.NonSerialized] public PlayerBody body;
 
     public static Player instance {get; private set;}
 
-    public int maxRage = 3;
+    public int maxRage = 6;
     public int _rage;
     public int rage{
         get{
@@ -22,25 +25,35 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool helloworldCharged = false;
+
     public bool locked = false;
+    public GameObject typedHitWavePrefab;
 
     void Awake(){
         instance = this;
         hand = GetComponentInChildren<PlayerHand>();
+        body = GetComponentInChildren<PlayerBody>();
+        HP = maxHP;
     }
 
     void Start(){
-        StartCoroutine(Dialogue.instance.Play(@"
-        A：你好，我是A。
-        B：你好，我是B。
-        C：你好，我是C。
-        "));
+        // StartCoroutine(Dialogue.instance.Play(@"
+        // A：你好，我是A。
+        // B：你好，我是B。
+        // C：你好，我是C。
+        // "));
     }
 
     void UpdateInput(){
         if(locked) return;
         if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
-            commands.Submit();
+            bool showPlayWave;
+            commands.Submit(out showPlayWave);
+            if(showPlayWave){
+                GameObject go = Instantiate(typedHitWavePrefab, typedHitWavePrefab.transform.parent);
+                go.SetActive(true);
+            }
             return;
         }
         if(Input.GetKeyDown(KeyCode.Backspace)){
@@ -48,6 +61,7 @@ public class Player : MonoBehaviour
             return;
         }
         string input = Input.inputString;
+        // Debug.Log(input);
         if(input.Length != 0){
             foreach(char c in input.ToLower()){
                 commands.PushChar(c);
@@ -63,18 +77,25 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void MoveLeft(){
-        transform.position += Vector3.left * 0.1f;
-        Vector3 scale = transform.localScale;
-        scale.x = -Mathf.Abs(scale.x);
-        transform.localScale = scale;
-    }
+    float accSpeed = 0f;
 
-    public void MoveRight(){
-        transform.position += Vector3.right * 0.1f;
+    public Tween Move(float direction){
+        if(accSpeed == 0f || Mathf.Sign(accSpeed) != direction){
+            accSpeed = 0.3f * direction;
+        }else{
+            if(accSpeed > 0){
+                accSpeed += 0.3f;
+            }else{
+                accSpeed -= 0.3f;
+            }
+        }
+        accSpeed = Mathf.Clamp(accSpeed, -1f, 1f);
+
+        Vector3 target = transform.position + Vector3.right * accSpeed;
         Vector3 scale = transform.localScale;
-        scale.x = Mathf.Abs(scale.x);
+        scale.x = Mathf.Abs(scale.x) * direction;
         transform.localScale = scale;
+        return transform.DOMove(target, 0.1f);
     }
 
     void Update(){
@@ -83,12 +104,11 @@ public class Player : MonoBehaviour
         if(currentCommand == null){
             if(commands.queue.Count > 0){
                 currentCommand = commands.queue.Dequeue();
-                currentCommand.OnStart(this);
+                currentCommand.Start(this);
             }
         }
         // 执行当前命令
         if(currentCommand != null){
-            currentCommand.OnUpdate(this);
             if(currentCommand.IsEnd(this)){
                 currentCommand = null;
             }

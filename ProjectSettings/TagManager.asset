@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - hit
+  - flashhit
+  - flashhit_ex
+  - firehit
+  - firehit_ex
+  - woodenhit
+  - woodenhit_ex
   layers:
   - Default
   - TransparentFX
