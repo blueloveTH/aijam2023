@@ -43,7 +43,7 @@ public class ChargeUI : MonoBehaviour
         locked = true;
         yield return new WaitForSeconds(0.5f);
         for(int i=0; i<3; i++){
-            icons[i].sprite = null;
+            icons[i].sprite = Resources.Load<Sprite>("Sprites/Charge/empty");
             icons[i].gameObject.name = "_";
         }
         locked = false;

@@ -13,7 +13,7 @@ public class TypedHitWave : MonoBehaviour
 
         float scale = transform.localScale.x;
         const float duration = 0.3f;
-        transform.DOScale(scale * 2f, duration);
+        transform.DOScale(scale * 1.5f, duration);
         GetComponent<Image>().DOFade(0, duration).OnComplete(() => {
             Destroy(gameObject);
         });
