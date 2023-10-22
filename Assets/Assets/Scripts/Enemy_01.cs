@@ -163,7 +163,10 @@ public class Enemy_01 : MonoBehaviour
             }
 
             currentHP -= hitValue;
-            
+
+            // 受伤音效
+            SoundManager.instance.PlaySound(SoundManager.instance.hit[Random.Range(0,4)]);
+
             //受伤文本
             if (currentHP > 0)
                 setHitText(hitValue);
@@ -285,6 +288,8 @@ public class Enemy_01 : MonoBehaviour
             state = ShiTouState.DaShuSkill1;
             anim.SetInteger("DaShuState", (int)state);
 
+            StartCoroutine(erorrSound());
+
             // 技能范围提示器
             Vector3 currentPosition = transform.position;
             // 设置技能提示器位置
@@ -326,6 +331,9 @@ public class Enemy_01 : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
         if (enemyName == "魔物树" && !EnemyManager.Instance.stopTime)
         {
+
+            StartCoroutine(erorrSound());
+
             // 动画设置
             state = ShiTouState.DaShuSkill1;
             anim.SetInteger("DaShuState", (int)state);
@@ -344,6 +352,7 @@ public class Enemy_01 : MonoBehaviour
             yield return new WaitForSeconds(3.5f);
 
             // 地刺发出
+            SoundManager.instance.PlaySound(SoundManager.instance.skill_DaShu);
             GameObject obj = Instantiate(daShuSkill_02, player.transform.position - new Vector3(0, 0f, 0), Quaternion.identity);
             Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
             float startTime = Time.time;
@@ -375,6 +384,9 @@ public class Enemy_01 : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
         if (enemyName == "龙" && !EnemyManager.Instance.stopTime)
         {
+
+            StartCoroutine(erorrSound());
+            SoundManager.instance.PlaySound_02(SoundManager.instance.longTalk);
             Flip();
             // 动画设置
             anim.enabled = true;
@@ -396,6 +408,7 @@ public class Enemy_01 : MonoBehaviour
                 yield return new WaitForSeconds(3.5f);
 
                 // 龙息发出
+                SoundManager.instance.PlaySound(SoundManager.instance.longFire);
                 GameObject obj = Instantiate(longSkill_01, this.transform.position - new Vector3(4, 2, 0), Quaternion.identity);
                 Vector3 objScale = obj.transform.localScale;
                 objScale.x = 0.4f;
@@ -419,6 +432,7 @@ public class Enemy_01 : MonoBehaviour
                 yield return new WaitForSeconds(3.5f);
 
                 // 龙息发出
+                SoundManager.instance.PlaySound(SoundManager.instance.longFire);
                 GameObject obj = Instantiate(longSkill_01, this.transform.position - new Vector3(-4, 2, 0), Quaternion.identity);
                 Vector3 objScale = obj.transform.localScale;
                 objScale.x = -0.4f;
@@ -440,6 +454,7 @@ public class Enemy_01 : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
         if (enemyName == "龙" && !EnemyManager.Instance.stopTime)
         {
+            SoundManager.instance.PlaySound_02(SoundManager.instance.longTalk);
             Flip();
             // 动画设置
             anim.enabled = true;
@@ -461,6 +476,7 @@ public class Enemy_01 : MonoBehaviour
 
             // 飞踹技能
             // 往上升
+            SoundManager.instance.PlaySound(SoundManager.instance.longAtk);
             float startTime = Time.time;
             float riseDuration = 0.75f;
             Vector3 initialPosition = transform.position;
@@ -498,7 +514,7 @@ public class Enemy_01 : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
         if (enemyName == "龙" && !EnemyManager.Instance.stopTime)
         {
-
+            SoundManager.instance.PlaySound_02(SoundManager.instance.longTalk);
             Flip();
             bool closeY = false;
             // 动画设置
@@ -513,7 +529,6 @@ public class Enemy_01 : MonoBehaviour
             List<Rigidbody2D> rbs = new List<Rigidbody2D>();
             for (int i = 0; i < 10; i++)
             {
-                
                 if (EnemyManager.Instance.stopTime && !closeY)
                 {
                     foreach (var item in rbs)
@@ -564,8 +579,9 @@ public class Enemy_01 : MonoBehaviour
             anim.SetInteger("RenMaState", (int)state);
 
 
-            // 设置技能提示器位置
+            // 人马冲刺
             yield return new WaitForSeconds(2.5f);
+            SoundManager.instance.PlaySound(SoundManager.instance.renmaATK);
             Vector3 spawnPosition = new Vector3(transform.position.x -3, -2.5f, 0.0f);
             GameObject go = Instantiate(skillRange, spawnPosition, Quaternion.identity);
             renmaSkill_01.SetActive(true);
@@ -594,7 +610,8 @@ public class Enemy_01 : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
         if (enemyName == "人马" && !EnemyManager.Instance.stopTime)
         {
-            // 设置技能提示器位置
+            StartCoroutine(erorrSound());
+            //  斧头丢出
             Vector3 spawnPosition = new Vector3(Random.Range(transform.position.x - 9, transform.position.x), -2.5f, 0.0f);
             GameObject go = Instantiate(skillRange, spawnPosition, Quaternion.identity);
             // 技能范围提示器的缩放
@@ -608,6 +625,17 @@ public class Enemy_01 : MonoBehaviour
         }
     }
 
+
+    IEnumerator erorrSound()
+    {
+        float waitTime = 1f;
+        for (int i = 5; i > 0; i--)
+        {
+            SoundManager.instance.PlaySound_02(SoundManager.instance.erorr);
+            yield return new WaitForSeconds(waitTime);
+            waitTime -= 0.2f;
+        }
+    }
 
 
     // 怪物翻转
@@ -672,6 +700,7 @@ public class Enemy_01 : MonoBehaviour
     }
 
 
+        
 
     // 黑龙技能
     void InvokeRandomDaShuSkill()
