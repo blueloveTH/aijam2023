@@ -116,7 +116,7 @@ class HelloWorldCommand : Command{
         player.helloworldCharged = false;
         Grayscale.blend = 1;
         Time.timeScale = 0.25f;
-        Tween t = DOTween.To(() => Grayscale.blend, x => Grayscale.blend = x, 0, 1).SetDelay(7);
+        Tween t = DOTween.To(() => Grayscale.blend, x => Grayscale.blend = x, 0, 1).SetDelay(11);
         t.SetUpdate(true);      // use unscaled time
         t.OnComplete(() => {
             Time.timeScale = 1;

@@ -86,7 +86,7 @@ public class Enemy_01 : MonoBehaviour
         // 10-15秒内随机选择黑龙技能
         if (!EnemyManager.Instance.stopTime)
         {
-            InvokeRepeating("InvokeRandomDaShuSkill", 10f, Random.Range(10f, 15f));
+            InvokeRepeating("InvokeRandomDaShuSkill", 10f, Random.Range(6f, 10f));
         }
 
         StartCoroutine(RM_01());
@@ -297,7 +297,7 @@ public class Enemy_01 : MonoBehaviour
             GameObject go = Instantiate(skillRange, spawnPosition, Quaternion.identity);
             // 技能范围提示器的缩放
             Vector3 newScale = go.transform.localScale;
-            newScale.x = 4;
+            newScale.x = 6;
             newScale.y = 0.25f;
             go.transform.localScale = newScale;
             Destroy(go, 3.5f);
@@ -679,7 +679,7 @@ public class Enemy_01 : MonoBehaviour
         while (true)
         {
             // 等待20到25秒
-            float randomDelay = Random.Range(20f, 25f);
+            float randomDelay = Random.Range(10f, 15f);
             yield return new WaitForSeconds(randomDelay);
             StartCoroutine(RenMaSkill_01());
             Debug.Log("RM01");
@@ -693,7 +693,7 @@ public class Enemy_01 : MonoBehaviour
         {
             StartCoroutine(RenMaSkill_02());
             // 等待20到25秒
-            float timer = Random.Range(6f, 10f);
+            float timer = Random.Range(3f, 7f);
             yield return new WaitForSeconds(timer);
 
         }
