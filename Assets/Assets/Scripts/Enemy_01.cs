@@ -17,6 +17,8 @@ public class Enemy_01 : MonoBehaviour
     public Transform panel;
     private Animator anim;
 
+
+
     public GameObject skillRange;
     public GameObject daShuSkill_01;
     public GameObject daShuSkill_02;
@@ -25,6 +27,9 @@ public class Enemy_01 : MonoBehaviour
     public GameObject longSkill_01;
     public GameObject longSkill_02;
     public GameObject longSkill_03;
+
+    public GameObject renmaSkill_01;
+    public GameObject renmaSkill_02;
 
     private float nextSkillTime;
 
@@ -43,6 +48,8 @@ public class Enemy_01 : MonoBehaviour
         LongSkill_01,
         LongSkill_02,
         LongSkill_03,
+        RM,
+        RenMaSkill_01,
     };
     ShiTouState state;
 
@@ -59,6 +66,10 @@ public class Enemy_01 : MonoBehaviour
         if (enemyName == "龙")
         {
             state = ShiTouState.Long;
+        }
+        if (enemyName == "人马")
+        {
+            state = ShiTouState.RM;
         }
 
         // 添加技能类型和伤害
@@ -77,6 +88,9 @@ public class Enemy_01 : MonoBehaviour
         {
             InvokeRepeating("InvokeRandomDaShuSkill", 10f, Random.Range(10f, 15f));
         }
+
+        StartCoroutine(RM_01());
+        StartCoroutine(RM_02());
         
     }
 
@@ -101,19 +115,16 @@ public class Enemy_01 : MonoBehaviour
             StartCoroutine(RandomDaShuSkill());
         }
 
-        /* 测试 黑龙技能
+        /*  技能测试
         if (Input.GetKeyUp(KeyCode.A))
         {
-            StartCoroutine(LongSkill_01());
-        }
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-            StartCoroutine(LongSkill_02());
+            StartCoroutine(RenMaSkill_01());
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            StartCoroutine(LongSkill_03());
+            StartCoroutine(RenMaSkill_02());
         }*/
+
     }
 
 
@@ -152,7 +163,6 @@ public class Enemy_01 : MonoBehaviour
             }
 
             currentHP -= hitValue;
-            Debug.Log(hitValue);
             
             //受伤文本
             if (currentHP > 0)
@@ -533,11 +543,68 @@ public class Enemy_01 : MonoBehaviour
                 newScale.y = 0.25f;
                 go.transform.localScale = newScale;
                 Destroy(go, 3.5f);
-                Destroy(skill03, 20f);
+                Destroy(skill03, 8f);
             }
             rbs.Clear();
             Flip();
             LongSkillComplete();
+        }
+    }
+
+
+    IEnumerator RenMaSkill_01()
+    {
+        yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
+        if (enemyName == "人马" && !EnemyManager.Instance.stopTime)
+        {
+            // 动画设置
+            anim.enabled = true;
+            anim.speed = 1;
+            state = ShiTouState.RenMaSkill_01;
+            anim.SetInteger("RenMaState", (int)state);
+
+
+            // 设置技能提示器位置
+            yield return new WaitForSeconds(2.5f);
+            Vector3 spawnPosition = new Vector3(transform.position.x -3, -2.5f, 0.0f);
+            GameObject go = Instantiate(skillRange, spawnPosition, Quaternion.identity);
+            renmaSkill_01.SetActive(true);
+            BoxCollider2D box = renmaSkill_01.GetComponent<BoxCollider2D>();
+            box.isTrigger = true;
+            // 技能范围提示器的缩放
+            Vector3 newScale = go.transform.localScale;
+            newScale.x = 10f;
+            newScale.y = 0.5f;
+            go.transform.localScale = newScale;
+            Destroy(go, 3.5f);
+            yield return new WaitForSeconds(4.5f);
+            box.isTrigger = false;
+            renmaSkill_01.SetActive(false);
+            anim.enabled = false;
+            yield return new WaitForSeconds(3f);
+            anim.enabled = true;
+            state = ShiTouState.RM;
+            anim.SetInteger("RenMaState", (int)state);
+        }
+    }
+
+
+    IEnumerator RenMaSkill_02()
+    {
+        yield return new WaitForSeconds(0.1f); // 添加一个小延迟，以确保协程在下一帧开始执行
+        if (enemyName == "人马" && !EnemyManager.Instance.stopTime)
+        {
+            // 设置技能提示器位置
+            Vector3 spawnPosition = new Vector3(Random.Range(transform.position.x - 9, transform.position.x), -2.5f, 0.0f);
+            GameObject go = Instantiate(skillRange, spawnPosition, Quaternion.identity);
+            // 技能范围提示器的缩放
+            Vector3 newScale = go.transform.localScale;
+            newScale.x = 4f;
+            newScale.y = 0.5f;
+            go.transform.localScale = newScale;
+            Destroy(go, 3.5f);
+            GameObject obj = Instantiate(renmaSkill_02, spawnPosition + new Vector3(0,30f,0), Quaternion.identity);
+            Destroy(obj, 5f);
         }
     }
 
@@ -579,6 +646,32 @@ public class Enemy_01 : MonoBehaviour
     }
 
 
+    IEnumerator RM_01()
+    {
+        while (true)
+        {
+            // 等待20到25秒
+            float randomDelay = Random.Range(20f, 25f);
+            yield return new WaitForSeconds(randomDelay);
+            StartCoroutine(RenMaSkill_01());
+            Debug.Log("RM01");
+
+        }
+    }
+
+    IEnumerator RM_02()
+    {
+        while (true)
+        {
+            StartCoroutine(RenMaSkill_02());
+            // 等待20到25秒
+            float timer = Random.Range(6f, 10f);
+            yield return new WaitForSeconds(timer);
+
+        }
+    }
+
+
 
     // 黑龙技能
     void InvokeRandomDaShuSkill()
@@ -608,6 +701,12 @@ public class Enemy_01 : MonoBehaviour
     void LongSkillComplete()
     {
         state = ShiTouState.Long; // 将状态切换为默认状态
+        anim.SetInteger("LongState", (int)state);
+    }
+
+    void RMSkillComplete()
+    {
+        state = ShiTouState.RM; // 将状态切换为默认状态
         anim.SetInteger("LongState", (int)state);
     }
 

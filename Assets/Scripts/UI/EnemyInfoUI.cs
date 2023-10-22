@@ -24,6 +24,7 @@ public class EnemyInfoUI : MonoBehaviour
                 Transform levels_t = GameObject.Find("Levels").transform;
                 levels_t.GetChild(_index).gameObject.SetActive(true);
                 const float deltaY = 10.91f;
+                DeathUI.instance.Respawn();
                 levels_t.DOMoveY(levels_t.localPosition.y + deltaY, 0.5f);
                 continue;
             }

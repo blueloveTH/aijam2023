@@ -19,7 +19,7 @@ public class SkillRange : MonoBehaviour
     private System.Collections.IEnumerator FadeInOut()
     {
 
-        float fadeDuration = 0.8f; // ½¥±ä³ÖĞøÊ±¼ä
+        float fadeDuration = 0.8f; // æ¸å˜æŒç»­æ—¶é—´
         for (int i = 0; i < 10; i++)
         {
 
@@ -28,7 +28,7 @@ public class SkillRange : MonoBehaviour
             {
                 fadeDuration = 0.08f;
             }
-            // ½¥±äÎªÍ¸Ã÷
+            // æ¸å˜ä¸ºé€æ˜
             float elapsedTime = 0f;
             while (elapsedTime < fadeDuration)
             {
@@ -38,7 +38,7 @@ public class SkillRange : MonoBehaviour
                 yield return null;
             }
 
-            // ½¥±ä»ØÔ­É«
+            // æ¸å˜å›åŸè‰²
             elapsedTime = 0f;
             while (elapsedTime < fadeDuration)
             {

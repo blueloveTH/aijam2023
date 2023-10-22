@@ -18,7 +18,7 @@ public class StopTime : MonoBehaviour
             }
             else
             {
-                Time.timeScale = 1f; // 恢复正常时间流逝速度
+                Time.timeScale = 1f; // 鎭㈠姝ｅ父鏃堕棿娴侀�濋�熷害
             }
         }
         if (Input.GetKeyDown(KeyCode.R))

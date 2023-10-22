@@ -115,7 +115,12 @@ class HelloWorldCommand : Command{
         player.rage -= 5;
         player.helloworldCharged = false;
         Grayscale.blend = 1;
-        DOTween.To(() => Grayscale.blend, x => Grayscale.blend = x, 0, 1).SetDelay(7);
+        Time.timeScale = 0.25f;
+        Tween t = DOTween.To(() => Grayscale.blend, x => Grayscale.blend = x, 0, 1).SetDelay(7);
+        t.SetUpdate(true);      // use unscaled time
+        t.OnComplete(() => {
+            Time.timeScale = 1;
+        });
         return true;
     }
     public override bool IsEnd(Player player){

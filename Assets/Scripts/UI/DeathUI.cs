@@ -24,14 +24,17 @@ public class DeathUI : MonoBehaviour
         
         var enemy = FindObjectOfType<Enemy_01>();
         enemy.currentHP = enemy.maxHP;
+        Respawn();
+        t = blackMask.DOFade(0f, 0.5f);
+        yield return t.WaitForCompletion();
+        Player.instance.locked = false;
+    }
+
+    public void Respawn(){
         Player.instance.commands.queue.Clear();
         Player.instance.transform.position = new Vector3(-4.49f, -0.9215848f, 0);
         Player.instance.HP = Player.instance.maxHP;
         Player.instance.rage = 0;
         Player.instance.Move(1);
-        t = blackMask.DOFade(0f, 0.5f);
-        yield return t.WaitForCompletion();
-        Player.instance.locked = false;
-        
     }
 }

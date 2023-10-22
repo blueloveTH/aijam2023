@@ -111,7 +111,7 @@ public class PlayerHand : MonoBehaviour
         GameObject damagePrefab = B.Find("damage_template").gameObject;
         GameObject damage = Instantiate(damagePrefab, B);
         damage.tag = name + (ex ? "_ex" : "");
-        Destroy(damage, 5f);
+        Destroy(damage, punchTime*2.2f);
 
         spr.sprite = Resources.Load<Sprite>("Sprites/" + name);
 

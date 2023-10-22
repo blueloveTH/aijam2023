@@ -121,6 +121,11 @@ public class Player : Unit
         Dictionary<string, int> table = new Dictionary<string, int>{
             {"shuSkill_01", 3},
             {"shuSkill_02", 2},
+            {"longSkill_01", 12},
+            {"longSkill_02", 15},
+            {"longSkill_03", 4},
+            {"renmaSkill_01", 6},
+            {"renmaSkill_02", 3},
         };
         if(table.TryGetValue(other.tag, out int damage)){
             HP -= damage;
