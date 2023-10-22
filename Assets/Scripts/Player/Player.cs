@@ -95,7 +95,8 @@ public class Player : Unit
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(scale.x) * direction;
         transform.localScale = scale;
-        return transform.DOMove(target, 0.1f);
+        return transform.GetComponent<Rigidbody2D>().DOMove(target, 0.1f);
+        // return transform.DOMove(target, 0.1f);
     }
 
     void Update(){
@@ -113,5 +114,26 @@ public class Player : Unit
                 currentCommand = null;
             }
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D other){
+        if(locked) return;
+        Dictionary<string, int> table = new Dictionary<string, int>{
+            {"shuSkill_01", 3},
+            {"shuSkill_02", 2},
+        };
+        if(table.TryGetValue(other.tag, out int damage)){
+            HP -= damage;
+            if(HP == 0){
+                StartCoroutine(DeathUI.instance.DeathCoro());
+            }else{
+                locked = true;
+                Invoke("Unlock", 0.5f);
+            }
+        }
+    }
+
+    public void Unlock(){
+        locked = false;
     }
 }

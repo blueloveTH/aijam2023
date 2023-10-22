@@ -111,23 +111,33 @@ public class PlayerHand : MonoBehaviour
         GameObject damagePrefab = B.Find("damage_template").gameObject;
         GameObject damage = Instantiate(damagePrefab, B);
         damage.tag = name + (ex ? "_ex" : "");
-        Destroy(damage, punchTime * 2);
+        Destroy(damage, 5f);
 
         spr.sprite = Resources.Load<Sprite>("Sprites/" + name);
-        B.DOMove(nextB, punchTime).OnComplete(() => {
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(B.DOMove(nextB, punchTime));
+        seq.Append(B.DOMove(prevB, punchTime));
+        seq.AppendCallback(() => {
+            isPunching = false;
+            spr.sprite = Resources.Load<Sprite>("Sprites/hit");
+            if(name == "woodenhit"){
+                Player.instance.HP += ex?3:2;
+            }
+        });
+        seq.OnUpdate(() => {
             // trigger effect
+            // is damage object still alive?
+            bool destroyed = damage == null || damage.activeSelf == false;
+            if(!destroyed) return;
             if(name != "hit"){
                 GameObject go = Instantiate(hitEffect, nextB, Quaternion.identity);
                 go.GetComponentInChildren<Particle>().Play(name);
+            }else{
+                Player.instance.rage++;
             }
-            
-            B.DOMove(prevB, punchTime).OnComplete(() => {
-                isPunching = false;
-                spr.sprite = Resources.Load<Sprite>("Sprites/hit");
-                if(name == "woodenhit"){
-                    Player.instance.HP += ex?3:2;
-                }
-            });
+            seq.onUpdate = null;
         });
+        seq.Play();
     }
 }

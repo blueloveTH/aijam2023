@@ -11,6 +11,7 @@ public class Dialogue : MonoBehaviour
     public Text text;
 
     private bool isAnyKeyDownThisFrame = false;
+    private bool isEscapeKeyDownThisFrame = false;
 
     void Awake(){
         instance = this;
@@ -19,6 +20,7 @@ public class Dialogue : MonoBehaviour
 
     void LateUpdate(){
         isAnyKeyDownThisFrame = Input.anyKeyDown;
+        isEscapeKeyDownThisFrame = Input.GetKeyDown(KeyCode.Escape);
     }
 
     public IEnumerator Play(string source){
@@ -35,11 +37,13 @@ public class Dialogue : MonoBehaviour
             Debug.Assert(parts.Length == 2);
             string avatar = parts[0];
             string content = parts[1];
-            this.avatar.sprite = Resources.Load("Avatars/" + avatar) as Sprite;
-            Tween t = this.text.DOText(content, content.Length * 0.1f);
+            this.avatar.sprite = Resources.Load<Sprite>("Avatars/" + avatar);
+            Tween t = this.text.DOText(content, content.Length * 0.05f);
+            t.SetEase(Ease.Linear);
             yield return t.WaitForCompletion();
             yield return new WaitUntil(() => isAnyKeyDownThisFrame);
             this.text.text = "";
+            if(isEscapeKeyDownThisFrame) break;
         }
         cg.alpha = 0;
         cg.blocksRaycasts = false;

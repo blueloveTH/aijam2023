@@ -29,7 +29,7 @@ class DownCommand : Command{
 
 class PunchCommand : Command{
     public override bool Start(Player player){
-        player.rage += 1;
+        // player.rage += 1;
         player.hand.Punch("hit", false);
         return true;
     }
