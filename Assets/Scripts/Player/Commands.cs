@@ -128,6 +128,16 @@ class HelloWorldCommand : Command{
     }
 }
 
+class HelpCommand : Command{
+    public override bool Start(Player player){
+        HelpUI.instance.Show(true);
+        return true;
+    }
+    public override bool IsEnd(Player player){
+        return true;
+    }
+}
+
 public class CommandBuffer
 {
     public static Dictionary<string, System.Type> allCommands = new Dictionary<string, System.Type>(){
@@ -140,6 +150,7 @@ public class CommandBuffer
         {"firehit", typeof(FireHitCommand)},
         {"woodenhit", typeof(WoodenHitCommand)},
         {"helloworld", typeof(HelloWorldCommand)},
+        {"help", typeof(HelpCommand)},
     };
 
     public Queue<Command> queue = new Queue<Command>();

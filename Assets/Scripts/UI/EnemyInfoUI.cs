@@ -9,6 +9,8 @@ public class EnemyInfoUI : MonoBehaviour
     public Transform hpBar;
     public Text title;
 
+    public GameObject EndAnimation;
+
     int _index = 0;
 
     void Start(){
@@ -22,6 +24,10 @@ public class EnemyInfoUI : MonoBehaviour
                 yield return new WaitForSeconds(2f);
                 _index++;
                 Transform levels_t = GameObject.Find("Levels").transform;
+                if(_index == levels_t.childCount){
+                    EndAnimation.SetActive(true);
+                    yield break;
+                }
                 levels_t.GetChild(_index).gameObject.SetActive(true);
                 const float deltaY = 10.91f;
                 DeathUI.instance.Respawn();
@@ -35,5 +41,9 @@ public class EnemyInfoUI : MonoBehaviour
             title.text = p.enemyName;
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    public void RestartGame(){
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

@@ -25,12 +25,12 @@ public class SoundManager : MonoBehaviour
     public AudioSource audioSource_02;
 
     public AudioClip[] hit;
-    public AudioClip skill_DaShu; // ´óÊ÷µØ´ÌºÍÊ÷Ö¦
-    public AudioClip erorr;         // ¾¯¸æ
-    public AudioClip longFire;      // ºÚÁú»ğÑæÅç³öÊ±
-    public AudioClip renmaATK;      // ÈËÂí×¼±¸³å´Ì
-    public AudioClip longAtk;       // Áú×¼±¸¸©³å
-    public AudioClip longTalk;      // ºÚÁúÈÕ³£ÓÃÓï
+    public AudioClip skill_DaShu; // å¤§æ ‘åœ°åˆºå’Œæ ‘æ
+    public AudioClip erorr;         // è­¦å‘Š
+    public AudioClip longFire;      // é»‘é¾™ç«ç„°å–·å‡ºæ—¶
+    public AudioClip renmaATK;      // äººé©¬å‡†å¤‡å†²åˆº
+    public AudioClip longAtk;       // é¾™å‡†å¤‡ä¿¯å†²
+    public AudioClip longTalk;      // é»‘é¾™æ—¥å¸¸ç”¨è¯­
 
     private void Start()
     {
@@ -39,26 +39,26 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound_02(AudioClip sound)
     {
-        // Í£Ö¹µ±Ç°ÕıÔÚ²¥·ÅµÄÉùÒô
+        // åœæ­¢å½“å‰æ­£åœ¨æ’­æ”¾çš„å£°éŸ³
         audioSource.Stop();
 
-        // ·ÖÅäĞÂµÄÉùÒôÎÄ¼ş
+        // åˆ†é…æ–°çš„å£°éŸ³æ–‡ä»¶
         audioSource.clip = sound;
 
-        // ²¥·ÅĞÂµÄÉùÒô
+        // æ’­æ”¾æ–°çš„å£°éŸ³
         audioSource.Play();
     }
 
 
     public void PlaySound(AudioClip sound)
     {
-        // Í£Ö¹µ±Ç°ÕıÔÚ²¥·ÅµÄÉùÒô
+        // åœæ­¢å½“å‰æ­£åœ¨æ’­æ”¾çš„å£°éŸ³
         audioSource.Stop();
 
-        // ·ÖÅäĞÂµÄÉùÒôÎÄ¼ş
+        // åˆ†é…æ–°çš„å£°éŸ³æ–‡ä»¶
         audioSource.clip = sound;
 
-        // ²¥·ÅĞÂµÄÉùÒô
+        // æ’­æ”¾æ–°çš„å£°éŸ³
         audioSource.Play();
     }
 }

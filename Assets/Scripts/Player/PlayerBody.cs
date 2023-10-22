@@ -6,10 +6,13 @@ public class PlayerBody : MonoBehaviour
 {
     public Sprite spIdle;
     public Sprite spMove;
+    public Sprite spIdle2;
 
     public bool isMoving = false;
-
     private SpriteRenderer spriteRenderer;
+
+    float count = 0;
+    bool useIdle2 = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +27,18 @@ public class PlayerBody : MonoBehaviour
             if(isMoving){
                 spriteRenderer.sprite = spMove;
             }else{
-                spriteRenderer.sprite = spIdle;
+                // spriteRenderer.sprite = spIdle;
+                // play idle idle2 loop
+                if(useIdle2){
+                    spriteRenderer.sprite = spIdle2;
+                }else{
+                    spriteRenderer.sprite = spIdle;
+                }
+                count += Time.deltaTime;
+                if(count > 0.5f){
+                    count = 0;
+                    useIdle2 = !useIdle2;
+                }
             }
             yield return new WaitForEndOfFrame();
         }
