@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerBody : MonoBehaviour
 {
@@ -20,6 +21,18 @@ public class PlayerBody : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = spIdle;
         StartCoroutine(Animation());
+    }
+
+    Sequence seq;
+
+    public void RedFlash(){
+        seq.Kill();
+        seq = DOTween.Sequence();
+        for(int i=0; i<3; i++){
+            seq.Append(spriteRenderer.DOColor(Color.red, 0.1f));
+            seq.Append(spriteRenderer.DOColor(Color.white, 0.1f));
+        }
+        seq.Play();
     }
 
     IEnumerator Animation(){

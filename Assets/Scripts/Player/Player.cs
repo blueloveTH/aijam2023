@@ -133,6 +133,7 @@ public class Player : Unit
                 StartCoroutine(DeathUI.instance.DeathCoro());
             }else{
                 locked = true;
+                body.RedFlash();
                 Invoke("Unlock", 0.5f);
             }
         }

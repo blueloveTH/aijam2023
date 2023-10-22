@@ -4621,7 +4621,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.4395664, y: 4.8800116}
+  m_Size: {x: 1.74, y: 4.8800116}
   m_EdgeRadius: 0
 --- !u!210 &1621367605
 SortingGroup:
@@ -4694,8 +4694,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.20016162, y: -1.1630945}
-  m_Size: {x: 1.6281834, y: 5.1458406}
+  m_Offset: {x: 0.2, y: -1.1630945}
+  m_Size: {x: 1.99, y: 5.1458406}
   m_Direction: 0
 --- !u!1001 &1627987426
 PrefabInstance:
